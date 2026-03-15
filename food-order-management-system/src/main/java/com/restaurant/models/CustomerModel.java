@@ -15,8 +15,6 @@ public class CustomerModel {
     private Integer id;
     private String name;
     private String email;
-
-    @JsonIgnore
     private Long contact;
     private String address;
 

@@ -74,9 +74,17 @@ public class CustomerImpl implements CustomerService {
         Optional<CustomerModel>opt = customerRepo.findById(customer.getId());
         if(opt.isPresent())
         {
+            CustomerModel c = opt.get();
+            c.setName(customer.getName());
+            c.setAddress(customer.getAddress());
+            c.setEmail(customer.getEmail());
+            c.setContact(customer.getContact());
+
+            CustomerModel c1 = customerRepo.save(c);
+
             res.setStatusCode(HttpStatus.OK.value());
             res.setMsg("customer is updated");
-            res.setData(customerRepo.save(customer));
+            res.setData(c1);
             return new ResponseEntity<>(res,HttpStatus.CREATED);
 
         }

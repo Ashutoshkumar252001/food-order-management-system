@@ -1,30 +1,29 @@
 package com.restaurant.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 
 @Entity
-public class CustomerModel {
+public class CustomerModel extends BaseModel{
+    @OneToMany
+    @JsonIgnore
+    private List<OrderModel> order;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+
     private String name;
     private String email;
     private Long contact;
     private String address;
 
-
-    public Integer getId() {
-        return id;
+    public List<OrderModel> getOrder() {
+        return order;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setOrder(List<OrderModel> order) {
+        this.order = order;
     }
 
     public String getName() {

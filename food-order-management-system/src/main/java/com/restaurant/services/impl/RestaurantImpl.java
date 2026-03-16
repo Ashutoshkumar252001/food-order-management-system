@@ -2,10 +2,14 @@ package com.restaurant.services.impl;
 
 import com.restaurant.dto.ResponseStructure;
 import com.restaurant.exceptions.IdNotFoundException;
+import com.restaurant.exceptions.NoRecordAvailableException;
 import com.restaurant.models.RestaurantModel;
 import com.restaurant.repository.RestaurantRepo;
 import com.restaurant.services.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -108,16 +112,45 @@ public class RestaurantImpl implements RestaurantService {
 
     @Override
     public ResponseEntity<ResponseStructure<List<RestaurantModel>>> getRestaurantByLocation(String location) {
-        return null;
+        ResponseStructure<List<RestaurantModel>> res = new ResponseStructure<>();
+        List<RestaurantModel> li = restaurantRepo.findRestaurantByLocation(location);
+        if (li.isEmpty()) {
+            throw new NoRecordAvailableException("");
+        } else {
+            res.setStatusCode(HttpStatus.OK.value());
+            res.setMsg("Hotel is found at this place");
+            res.setData(li);
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        }
     }
+
 
     @Override
     public ResponseEntity<ResponseStructure<RestaurantModel>> getByName(String name) {
-        return null;
+        ResponseStructure<RestaurantModel> res = new ResponseStructure<>();
+        Optional<RestaurantModel> opt = restaurantRepo.getByName(name);
+        if(opt.isPresent()){
+            RestaurantModel r = opt.get();
+            res.setStatusCode(HttpStatus.OK.value());
+            res.setMsg("Restaurant is available");
+            res.setData(r);
+            return new ResponseEntity<>(res,HttpStatus.OK);
+        }else {
+            throw new NoRecordAvailableException("");
+        }
+
+
     }
 
     @Override
-    public ResponseEntity<ResponseStructure<RestaurantModel>> getRestaurantByPaginationAndSorting(int pageNo, int pageSize, String field) {
-        return null;
+    public ResponseEntity<ResponseStructure<Page<RestaurantModel>>> getRestaurantByPaginationAndSorting(int pageNo, int pageSize, String field) {
+        ResponseStructure<Page<RestaurantModel>> res = new ResponseStructure<>();
+        PageRequest pageRequest  = PageRequest.of(pageNo,pageSize, Sort.by(field));
+        Page<RestaurantModel> page = restaurantRepo.findAll(pageRequest);
+
+        res.setStatusCode(HttpStatus.OK.value());
+        res.setMsg("Restaurant fetched with pagination and sorting");
+        res.setData(page);
+        return new ResponseEntity<>(res,HttpStatus.OK);
     }
 }

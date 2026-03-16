@@ -1,26 +1,20 @@
 package com.restaurant.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
-public class RestaurantModel {
+public class RestaurantModel extends BaseModel{
+    @OneToMany
+    @JsonIgnore
+    private List<MenuItemModel> menuItem;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+
     private String restaurantName;
     private String location;
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getRestaurantName() {
         return restaurantName;
@@ -36,5 +30,13 @@ public class RestaurantModel {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public List<MenuItemModel> getMenuItem() {
+        return menuItem;
+    }
+
+    public void setMenuItem(List<MenuItemModel> menuItem) {
+        this.menuItem = menuItem;
     }
 }

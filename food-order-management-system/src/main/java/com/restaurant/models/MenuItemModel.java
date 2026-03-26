@@ -1,5 +1,6 @@
 package com.restaurant.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
@@ -9,13 +10,14 @@ import java.util.List;
 @Entity
 public class MenuItemModel extends BaseModel{
     @OneToMany
+    @JsonIgnore
     private List<OrderItemModel> orderItem;
     @ManyToOne
     private RestaurantModel restaurant;
 
     private String itemName;
     private Double price;
-    private String availability;
+    private Boolean availability=true;
 
     public List<OrderItemModel> getOrderItem() {
         return orderItem;
@@ -49,11 +51,11 @@ public class MenuItemModel extends BaseModel{
         this.price = price;
     }
 
-    public String getAvailability() {
+    public Boolean getAvailability() {
         return availability;
     }
 
-    public void setAvailability(String availability) {
+    public void setAvailability(Boolean availability) {
         this.availability = availability;
     }
 }

@@ -19,8 +19,8 @@ public class MenuItemController {
     private MenuItemService menuItemService;
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseStructure<List<MenuItemModel>>> addMenuItems(
-            @RequestBody List<MenuItemModel> menu){
+    public ResponseEntity<ResponseStructure<MenuItemModel>> addMenuItems(
+            @RequestBody MenuItemModel menu){
 
         return menuItemService.addMenuItems(menu);
     }

@@ -25,26 +25,33 @@ public class MenuItemImpl implements MenuItemService {
     private RestaurantRepo restaurantRepo;
 
     @Override
-    public ResponseEntity<ResponseStructure<List<MenuItemModel>>> addMenuItems(List<MenuItemModel> menu) {
-
-
-        ResponseStructure<List<MenuItemModel>> res = new ResponseStructure<>();
-        Integer restaurantId = menu.get(0).getRestaurant().getId();
+    public ResponseEntity<ResponseStructure<MenuItemModel>> addMenuItems(MenuItemModel menu) {
+        ResponseStructure<MenuItemModel> res = new ResponseStructure<>();
+        if(menu.getPrice()<0 || menu.getPrice()==null){
+            throw new RuntimeException("Price cannot be negative");
+        }
+        if (menu.getRestaurant() == null || menu.getRestaurant().getId() == null) {
+            throw new RuntimeException("Restaurant id is required for all items");
+        }
+        Integer restaurantId = menu.getRestaurant().getId();
         Optional<RestaurantModel> opt = restaurantRepo.findById(restaurantId);
         if (opt.isEmpty()){
             throw new IdNotFoundException("Restaurant not found. Menu items cannot be saved");
 
         }
-        List<MenuItemModel> savedItems = menuItemRepo.saveAll(menu);
+        if (menu.getAvailability() == null) {
+            menu.setAvailability(true);
+        }
 
+       MenuItemModel m= menuItemRepo.save(menu);
 
         res.setStatusCode(HttpStatus.CREATED.value());
         res.setMsg("Menu items added successfully");
-        res.setData(savedItems);
+        res.setData(m);
 
         return new ResponseEntity<>(res, HttpStatus.CREATED);
-    }
 
+    }
     @Override
     public ResponseEntity<ResponseStructure<List<MenuItemModel>>> getAllMenuItems(List<MenuItemModel> menu) {
 
@@ -85,6 +92,10 @@ public class MenuItemImpl implements MenuItemService {
         {
             throw new IdNotFoundException("id must be passed ");
         }
+        if (menu.getPrice() == null || menu.getPrice() < 0) {
+            throw new RuntimeException("Price cannot be negative");
+        }
+
         Optional<MenuItemModel>opt = menuItemRepo.findById(menu.getId());
         if(opt.isPresent() )
         {

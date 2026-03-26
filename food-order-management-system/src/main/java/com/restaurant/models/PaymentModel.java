@@ -1,15 +1,20 @@
 package com.restaurant.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
+import com.restaurant.enums.PaymentMethod;
+import com.restaurant.enums.PaymentStatus;
+import jakarta.persistence.*;
+
 @Entity
 public class PaymentModel extends BaseModel{
 
     @OneToOne
+    @JoinColumn(name = "order_id")
     private OrderModel order;
 
-    private String paymentMethod;
-    private String paymentStatus;
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
     private Double amount;
 
     public OrderModel getOrder() {
@@ -20,19 +25,19 @@ public class PaymentModel extends BaseModel{
         this.order = order;
     }
 
-    public String getPaymentMethod() {
+    public PaymentMethod getPaymentMethod() {
         return paymentMethod;
     }
 
-    public void setPaymentMethod(String paymentMethod) {
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
 
-    public String getPaymentStatus() {
+    public PaymentStatus getPaymentStatus() {
         return paymentStatus;
     }
 
-    public void setPaymentStatus(String paymentStatus) {
+    public void setPaymentStatus(PaymentStatus paymentStatus) {
         this.paymentStatus = paymentStatus;
     }
 

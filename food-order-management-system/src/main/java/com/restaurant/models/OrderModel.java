@@ -1,11 +1,11 @@
 package com.restaurant.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import com.restaurant.enums.OrderStatus;
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -13,15 +13,18 @@ public class OrderModel extends BaseModel{
 
     @ManyToOne
     private CustomerModel customer;
-
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "payment_id")
     private PaymentModel payment;
 
-    @OneToMany
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItemModel> orderItem;
 
-    private LocalDate orderDateTime;
-    private String Status;
+    @CreationTimestamp
+    private LocalDateTime orderDateTime;
+
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
     private Double totalAmount;
 
     public CustomerModel getCustomer() {
@@ -48,20 +51,12 @@ public class OrderModel extends BaseModel{
         this.orderItem = orderItem;
     }
 
-    public LocalDate getOrderDateTime() {
+    public LocalDateTime getOrderDateTime() {
         return orderDateTime;
     }
 
-    public void setOrderDateTime(LocalDate orderDateTime) {
+    public void setOrderDateTime(LocalDateTime orderDateTime) {
         this.orderDateTime = orderDateTime;
-    }
-
-    public String getStatus() {
-        return Status;
-    }
-
-    public void setStatus(String status) {
-        Status = status;
     }
 
     public Double getTotalAmount() {
@@ -70,5 +65,13 @@ public class OrderModel extends BaseModel{
 
     public void setTotalAmount(Double totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public OrderStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(OrderStatus status) {
+        this.status = status;
     }
 }

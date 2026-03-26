@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 public interface MenuItemService {
-    public ResponseEntity<ResponseStructure<List<MenuItemModel>>> addMenuItems(List<MenuItemModel> menu);
+    public ResponseEntity<ResponseStructure<MenuItemModel>> addMenuItems(MenuItemModel menu);
     public ResponseEntity<ResponseStructure<List<MenuItemModel>>> getAllMenuItems(List<MenuItemModel> menu);
     public ResponseEntity<ResponseStructure<MenuItemModel>> getById(Integer id);
     public ResponseEntity<ResponseStructure<MenuItemModel>> updatePrice(MenuItemModel menu);

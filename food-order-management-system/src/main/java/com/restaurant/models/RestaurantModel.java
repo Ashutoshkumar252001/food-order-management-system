@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 public class RestaurantModel extends BaseModel{
-    @OneToMany
+    @OneToMany(mappedBy = "restaurant")
     @JsonIgnore
     private List<MenuItemModel> menuItem;
 

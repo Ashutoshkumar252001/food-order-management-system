@@ -2,6 +2,7 @@ package com.restaurant.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity
@@ -9,7 +10,7 @@ public class OrderItemModel extends BaseModel {
     @ManyToOne
     private MenuItemModel menuItem;
     @ManyToOne
-    @JsonIgnore
+    @JoinColumn(name = "order_id")
     private OrderModel order;
 
     private Integer quantity;

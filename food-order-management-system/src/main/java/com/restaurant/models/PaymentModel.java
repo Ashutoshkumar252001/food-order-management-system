@@ -1,5 +1,6 @@
 package com.restaurant.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.restaurant.enums.PaymentMethod;
 import com.restaurant.enums.PaymentStatus;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ public class PaymentModel extends BaseModel{
 
     @OneToOne
     @JoinColumn(name = "order_id")
+    @JsonIgnore
     private OrderModel order;
 
     @Enumerated(EnumType.STRING)

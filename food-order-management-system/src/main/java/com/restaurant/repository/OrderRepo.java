@@ -10,8 +10,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OrderRepo extends JpaRepository<OrderModel,Integer> {
+    List<OrderModel> findByCustomer_Id(Integer customerId);
     List<OrderModel> findByStatus(OrderStatus status);
-    List<OrderModel> findByOrderDateTime(LocalDateTime orderDateTime);
+    List<OrderModel> findByOrderDateTimeBetween(LocalDateTime start, LocalDateTime end);
     List<OrderModel> findByTotalAmountBetween(Double minAmount, Double maxAmount);
 
     @Query("SELECT DISTINCT o FROM OrderModel o " +

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Entity
 public class MenuItemModel extends BaseModel{
-    @OneToMany
+    @OneToMany(mappedBy = "menuItem")
     @JsonIgnore
     private List<OrderItemModel> orderItem;
     @ManyToOne

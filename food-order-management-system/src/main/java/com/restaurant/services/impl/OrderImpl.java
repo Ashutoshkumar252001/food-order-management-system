@@ -141,7 +141,26 @@ public class OrderImpl implements OrderService {
 
     @Override
     public ResponseEntity<ResponseStructure<List<OrderModel>>> getOrderOfACustomer(Integer id) {
-        return null;
+
+        ResponseStructure<List<OrderModel>> res = new ResponseStructure<>();
+
+        Optional<CustomerModel> opt = customerRepo.findById(id);
+
+        if (opt.isEmpty()) {
+            throw new IdNotFoundException("Customer not found with id: " + id);
+        }
+
+        List<OrderModel> orders = orderRepo.findByCustomer_Id(id);
+
+        if (orders.isEmpty()) {
+            throw new RuntimeException("No orders found for this customer");
+        }
+
+        res.setStatusCode(HttpStatus.OK.value());
+        res.setMsg("Orders fetched successfully for customer");
+        res.setData(orders);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @Override
@@ -149,7 +168,6 @@ public class OrderImpl implements OrderService {
 
         ResponseStructure<OrderModel> res = new ResponseStructure<>();
 
-        // Step 1: Validate ID
         if (order.getId() == null) {
             throw new IdNotFoundException("Order id must be provided");
         }
@@ -235,12 +253,24 @@ public class OrderImpl implements OrderService {
 
     @Override
     public ResponseEntity<ResponseStructure<List<OrderModel>>> getOrderByDate(LocalDateTime orderDateTime) {
+
         ResponseStructure<List<OrderModel>> res = new ResponseStructure<>();
-        List<OrderModel> order = orderRepo.findByOrderDateTime(orderDateTime);
+
+        LocalDateTime start = orderDateTime.toLocalDate().atStartOfDay();
+
+        LocalDateTime end = orderDateTime.toLocalDate().atTime(23, 59, 59);
+
+        List<OrderModel> orders = orderRepo.findByOrderDateTimeBetween(start, end);
+
+        if (orders.isEmpty()) {
+            throw new RuntimeException("No orders found for this date");
+        }
+
         res.setStatusCode(HttpStatus.OK.value());
-        res.setMsg("get order by date");
-        res.setData(order);
-        return new ResponseEntity<>(res,HttpStatus.OK);
+        res.setMsg("Orders fetched by date");
+        res.setData(orders);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 
     @Override

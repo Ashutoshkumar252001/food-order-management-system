@@ -2,10 +2,13 @@ package com.restaurant.services.impl;
 
 import com.restaurant.dto.ResponseStructure;
 import com.restaurant.exceptions.IdNotFoundException;
+import com.restaurant.models.MenuItemModel;
 import com.restaurant.models.OrderItemModel;
 import com.restaurant.models.OrderModel;
+import com.restaurant.repository.MenuItemRepo;
 import com.restaurant.repository.OrderItemRepo;
 import com.restaurant.repository.OrderRepo;
+import com.restaurant.services.MenuItemService;
 import com.restaurant.services.OrderItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,11 +27,18 @@ public class OrderItemImpl implements OrderItemService {
     @Autowired
     private OrderRepo orderRepo;
 
+    @Autowired
+    private MenuItemRepo menuItemRepo;
+
     @Override
     public ResponseEntity<ResponseStructure<OrderItemModel>> addItemToOrder(OrderItemModel orderItem) {
 
         if (orderItem.getQuantity() == null || orderItem.getQuantity() < 1) {
             throw new RuntimeException("Quantity must be at least 1");
+        }
+
+        if (orderItem.getOrder() == null || orderItem.getOrder().getId() == null) {
+            throw new IdNotFoundException("Order id is required");
         }
 
         Integer orderId = orderItem.getOrder().getId();
@@ -37,17 +47,24 @@ public class OrderItemImpl implements OrderItemService {
 
         if (opt.isPresent()) {
             OrderModel order = opt.get();
-
             orderItem.setOrder(order);
 
-            if (orderItem.getMenuItem() == null || orderItem.getMenuItem().getPrice() == null) {
-                throw new RuntimeException("Menu item or price is missing");
+            if (orderItem.getMenuItem() == null || orderItem.getMenuItem().getId() == null) {
+                throw new RuntimeException("Menu item id is required");
             }
 
-            double price = orderItem.getMenuItem().getPrice();
-            double subtotal = price * orderItem.getQuantity();
+            Optional<MenuItemModel> opt1 = menuItemRepo.findById(orderItem.getMenuItem().getId());
 
-            orderItem.setSubtotal(subtotal);
+            if (opt1.isPresent()) {
+                MenuItemModel menu = opt1.get();
+
+                double subtotal = menu.getPrice() * orderItem.getQuantity();
+                orderItem.setMenuItem(menu);
+                orderItem.setSubtotal(subtotal);
+
+            } else {
+                throw new IdNotFoundException("Menu item not found");
+            }
 
             OrderItemModel savedItem = orderItemRepo.save(orderItem);
 

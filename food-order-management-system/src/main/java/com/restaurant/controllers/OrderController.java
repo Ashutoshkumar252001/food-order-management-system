@@ -5,6 +5,7 @@ import com.restaurant.enums.OrderStatus;
 import com.restaurant.models.OrderModel;
 import com.restaurant.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,7 +62,10 @@ public class OrderController {
 
     @GetMapping("/date")
     public ResponseEntity<ResponseStructure<List<OrderModel>>> getOrderByDate(
-            @RequestParam LocalDateTime orderDateTime) {
+            @RequestParam
+            @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+            LocalDateTime orderDateTime) {
+
         return orderService.getOrderByDate(orderDateTime);
     }
 

@@ -1,5 +1,6 @@
 package com.restaurant.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.restaurant.enums.OrderStatus;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,11 +14,13 @@ public class OrderModel extends BaseModel{
 
     @ManyToOne
     private CustomerModel customer;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "payment_id")
     private PaymentModel payment;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<OrderItemModel> orderItem;
 
     @CreationTimestamp

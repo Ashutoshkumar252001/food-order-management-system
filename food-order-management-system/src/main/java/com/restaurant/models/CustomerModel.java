@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 public class CustomerModel extends BaseModel{
-    @OneToMany
+    @OneToMany(mappedBy = "customer")
     @JsonIgnore
     private List<OrderModel> order;
 

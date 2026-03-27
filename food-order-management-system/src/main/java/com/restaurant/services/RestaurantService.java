@@ -16,4 +16,5 @@ public interface RestaurantService {
     ResponseEntity<ResponseStructure<List<RestaurantModel>>> getRestaurantByLocation(String location);
     ResponseEntity<ResponseStructure<RestaurantModel>> getByName(String name);
     ResponseEntity<ResponseStructure<Page<RestaurantModel>>> getRestaurantByPaginationAndSorting(int pageNo, int pageSize, String field);
+    ResponseEntity<ResponseStructure<RestaurantModel>> getMenuItemsOfRestaurant(Integer id);
 }

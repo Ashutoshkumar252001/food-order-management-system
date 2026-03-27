@@ -14,7 +14,11 @@ public class CustomerModel extends BaseModel{
 
 
     private String name;
+
+    @Column(unique = true)
     private String email;
+
+    @Column(unique = true)
     private Long contact;
     private String address;
 

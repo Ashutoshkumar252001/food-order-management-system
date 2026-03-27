@@ -9,7 +9,7 @@ import java.util.List;
 public class RestaurantModel extends BaseModel{
     @OneToMany(mappedBy = "restaurant")
     @JsonIgnore
-    private List<MenuItemModel> menuItem;
+    private List<MenuItemModel> menuItems;
 
 
     private String restaurantName;
@@ -32,11 +32,11 @@ public class RestaurantModel extends BaseModel{
         this.location = location;
     }
 
-    public List<MenuItemModel> getMenuItem() {
-        return menuItem;
+    public List<MenuItemModel> getMenuItems() {
+        return menuItems;
     }
 
-    public void setMenuItem(List<MenuItemModel> menuItem) {
-        this.menuItem = menuItem;
+    public void setMenuItems(List<MenuItemModel> menuItems) {
+        this.menuItems = menuItems;
     }
 }

@@ -50,6 +50,12 @@ public class RestaurantController {
     public ResponseEntity<ResponseStructure<RestaurantModel>> getByName(@PathVariable String name){
         return restaurantService.getByName(name);
     }
+    @GetMapping("/menu-items/{id}")
+    public ResponseEntity<ResponseStructure<RestaurantModel>> getMenuItemsOfRestaurant(
+            @PathVariable Integer id) {
+        return restaurantService.getMenuItemsOfRestaurant(id);
+    }
+
 
     @GetMapping("/page/{pageNo}/{pageSize}/{field}")
     public ResponseEntity<ResponseStructure<Page<RestaurantModel>>> getEmpByPaginationAndSorting(

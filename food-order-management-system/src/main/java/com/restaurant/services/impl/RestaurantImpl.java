@@ -3,7 +3,9 @@ package com.restaurant.services.impl;
 import com.restaurant.dto.ResponseStructure;
 import com.restaurant.exceptions.IdNotFoundException;
 import com.restaurant.exceptions.NoRecordAvailableException;
+import com.restaurant.models.MenuItemModel;
 import com.restaurant.models.RestaurantModel;
+import com.restaurant.repository.MenuItemRepo;
 import com.restaurant.repository.RestaurantRepo;
 import com.restaurant.services.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ import java.util.Optional;
 public class RestaurantImpl implements RestaurantService {
     @Autowired
     private RestaurantRepo restaurantRepo;
+    @Autowired
+    private MenuItemRepo menuItemRepo;
     @Override
     public ResponseEntity<ResponseStructure<RestaurantModel>> addRestaurant(RestaurantModel restaurant) {
         {
@@ -141,6 +145,27 @@ public class RestaurantImpl implements RestaurantService {
 
 
     }
+
+    @Override
+    public ResponseEntity<ResponseStructure<RestaurantModel>> getMenuItemsOfRestaurant(Integer id) {
+        Optional<RestaurantModel> opt = restaurantRepo.getRestaurantWithMenu(id);
+
+        ResponseStructure<RestaurantModel> res = new ResponseStructure<>();
+
+        if (opt.isPresent()) {
+            res.setStatusCode(HttpStatus.OK.value());
+            res.setMsg("Restaurant with menu items fetched successfully");
+            res.setData(opt.get());
+            return new ResponseEntity<>(res, HttpStatus.OK);
+        } else {
+            res.setStatusCode(HttpStatus.NOT_FOUND.value());
+            res.setMsg("Restaurant not found with id: " + id);
+            res.setData(null);
+            return new ResponseEntity<>(res, HttpStatus.NOT_FOUND);
+        }
+    }
+
+
 
     @Override
     public ResponseEntity<ResponseStructure<Page<RestaurantModel>>> getRestaurantByPaginationAndSorting(int pageNo, int pageSize, String field) {

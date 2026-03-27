@@ -23,7 +23,32 @@ public class CustomerImpl implements CustomerService {
     public ResponseEntity<ResponseStructure<CustomerModel>> createCustomer(CustomerModel customer)
     {
         ResponseStructure<CustomerModel> res = new ResponseStructure<>();
-       CustomerModel c = customerRepo.save(customer);
+        if (customer.getEmail() == null || customer.getEmail().isEmpty()) {
+            throw new RuntimeException("Email is required");
+        }
+
+        Optional<CustomerModel> emailOpt = customerRepo.findByEmail(customer.getEmail());
+        if (emailOpt.isPresent()) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        if (customer.getContact() == null) {
+            throw new RuntimeException("Contact is required");
+        }
+
+        String contactStr = String.valueOf(customer.getContact());
+
+        if (contactStr.length() != 10) {
+            throw new RuntimeException("Contact number must be 10 digits");
+        }
+
+        Optional<CustomerModel> contactOpt = customerRepo.findCustomerByContact(customer.getContact());
+        if (contactOpt.isPresent()) {
+            throw new RuntimeException("Contact already exists");
+        }
+
+
+        CustomerModel c = customerRepo.save(customer);
        res.setStatusCode(HttpStatus.CREATED.value());
        res.setMsg("customer is created");
        res.setData(c);
@@ -64,35 +89,51 @@ public class CustomerImpl implements CustomerService {
     }
 
     @Override
-    public ResponseEntity<ResponseStructure<CustomerModel>> updateCustomer(CustomerModel customer)
-    {
+    public ResponseEntity<ResponseStructure<CustomerModel>> updateCustomer(CustomerModel customer) {
+
         ResponseStructure<CustomerModel> res = new ResponseStructure<>();
-        if (customer.getId()==null)
-        {
-            throw new IdNotFoundException("id must be passed ");
-        }
-        Optional<CustomerModel>opt = customerRepo.findById(customer.getId());
-        if(opt.isPresent())
-        {
-            CustomerModel c = opt.get();
-            c.setName(customer.getName());
-            c.setAddress(customer.getAddress());
-            c.setEmail(customer.getEmail());
-            c.setContact(customer.getContact());
 
-            CustomerModel c1 = customerRepo.save(c);
-
-            res.setStatusCode(HttpStatus.OK.value());
-            res.setMsg("customer is updated");
-            res.setData(c1);
-            return new ResponseEntity<>(res,HttpStatus.CREATED);
-
+        if (customer.getId() == null) {
+            throw new IdNotFoundException("id must be passed");
         }
-        else
-        {
-            throw new IdNotFoundException("ID not found in database");
+
+        Optional<CustomerModel> opt = customerRepo.findById(customer.getId());
+
+        if (opt.isEmpty()) {
+            throw new IdNotFoundException("Customer not found");
         }
+
+        CustomerModel existing = opt.get();
+
+        Optional<CustomerModel> emailOpt = customerRepo.findByEmail(customer.getEmail());
+        if (emailOpt.isPresent() && !emailOpt.get().getId().equals(customer.getId())) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        String contactStr = String.valueOf(customer.getContact());
+        if (contactStr.length() != 10) {
+            throw new RuntimeException("Contact must be 10 digits");
+        }
+
+        Optional<CustomerModel> contactOpt = customerRepo.findCustomerByContact(customer.getContact());
+        if (contactOpt.isPresent() && !contactOpt.get().getId().equals(customer.getId())) {
+            throw new RuntimeException("Contact already exists");
+        }
+
+        existing.setName(customer.getName());
+        existing.setEmail(customer.getEmail());
+        existing.setContact(customer.getContact());
+        existing.setAddress(customer.getAddress());
+
+        CustomerModel updated = customerRepo.save(existing);
+
+        res.setStatusCode(HttpStatus.OK.value());
+        res.setMsg("Customer updated successfully");
+        res.setData(updated);
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
 
     @Override
     public ResponseEntity<ResponseStructure<CustomerModel>> deleteCustomer(Integer id)
